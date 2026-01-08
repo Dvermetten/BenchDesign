@@ -10,6 +10,7 @@ from nevergrad.optimization.optimizerlib import (
 import iohinspector
 import polars as pl
 from scipy.stats import rankdata
+import warnings
 
 class NG_Evaluator():
     def __init__(self, optimizer, budget: int = 2000):
@@ -99,9 +100,19 @@ def create_suite(problems, meta_dims):
     return probs_ioh
 
 if __name__ == "__main__":
-    from IOH_2026.problem_suite import problems, meta_dims
+    warnings.filterwarnings("ignore", category=Warning)
+    from problem_suite import problems, meta_dims
+    import os
+
+    if os.path.exists("data") and os.listdir("data"):
+        raise RuntimeError("The 'data' directory already exists and contains files. Please remove it before running.")
+    
     if len(problems) != 25:
-        Warning("Warning: Number of problems is not 25")
-    suite = create_suite(problems, meta_dims)
-    v1 = evaluate_suite(suite)
-    print(f"Performance value: {v1} (to be maximized)")
+        print("Warning: Number of problems is not 25")
+
+    try:
+        suite = create_suite(problems, meta_dims)
+        v1 = evaluate_suite(suite)
+        print(f"Performance value: {v1} (to be maximized)")
+    except Exception as e:
+        print(f"An error occurred during evaluation: {e}")
