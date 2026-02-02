@@ -29,13 +29,12 @@ algs = ['CMA', 'DE', 'PSO', 'BFGS', "Cobyla"]
 def run_benchmark(problem_suite, budget = 5000):
     for name, problem in problem_suite.items():
         for alg in algs:
-            prob_wrapped = ioh.wrap_problem(problem, name, ioh.ProblemClass.REAL, 5, lb=-5, ub=5)
             logger = ioh.logger.Analyzer(root = "data", folder_name=f"{name}_{alg}_logs", algorithm_name=alg)
-            prob_wrapped.attach_logger(logger)
+            problem.attach_logger(logger)
             optimizer = NG_Evaluator(alg, budget)
             for _ in range(5):
-                optimizer(prob_wrapped)
-                prob_wrapped.reset()
+                optimizer(problem)
+                problem.reset()
             logger.close()
         
 def get_Friedman_val(dt_perf):
@@ -96,7 +95,7 @@ def evaluate_suite(suite):
 def create_suite(problems, meta_dims):
     probs_ioh = {}
     for k in problems.keys():
-        probs_ioh[k] = ioh.wrap_problem(problems[k], k, ioh.ProblemClass.REAL, meta_dims[k])
+        probs_ioh[k] = ioh.wrap_problem(problems[k], k, ioh.ProblemClass.REAL, meta_dims[k], lb=-5, ub=5)
     return probs_ioh
 
 if __name__ == "__main__":
