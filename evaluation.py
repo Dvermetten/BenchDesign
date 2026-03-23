@@ -23,8 +23,8 @@ class NG_Evaluator():
             initial_point = np.random.uniform(-5, 5, size=func.meta_data.n_variables)
             parametrization = ng.p.Array(init=initial_point).set_bounds(-5, 5)
         else:
-            parametrization = ng.p.Array(shape=func.meta_data.n_variables).set_bounds(-5, 5)
-        optimizer = eval(f"{self.alg}")(
+            parametrization = ng.p.Array(shape=(func.meta_data.n_variables,)).set_bounds(-5, 5)
+            optimizer = eval(f"{self.alg}")(
             parametrization=parametrization, budget=int(self.budget)
         )
         optimizer.minimize(func)
